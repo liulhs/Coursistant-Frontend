@@ -12,9 +12,9 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
+import axios from 'axios';
 
 import { useRouter } from 'src/routes/hooks';
-
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
@@ -27,21 +27,63 @@ export default function LoginView() {
 
   const router = useRouter();
 
+  // Added state management for email, password, loading, error, and success messages
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await axios.post('http://api.e-ta.net/api/login', { email, password });
+
+      if (response.status === 200) {
+        setSuccess(response.data.message);
+        setError('');
+        setTimeout(() => {
+          window.location.href = 'https://dashboard.coursistant.com';
+        }, 1500);
+      }
+    } catch (error) {
+      setError('Invalid email or password');
+      setSuccess('');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderForm = (
-    <>
+    <form onSubmit={handleSubmit}>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField 
+          name="email" 
+          label="Email address" 
+          value={email} 
+          onChange={handleEmailChange} 
+          required 
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={handlePasswordChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -51,6 +93,7 @@ export default function LoginView() {
               </InputAdornment>
             ),
           }}
+          required
         />
       </Stack>
 
@@ -60,17 +103,20 @@ export default function LoginView() {
         </Link>
       </Stack>
 
+      {error && <Typography color="error">{error}</Typography>}
+      {success && <Typography color="success">{success}</Typography>}
+
       <LoadingButton
         fullWidth
         size="large"
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        loading={loading}
       >
         Login
       </LoadingButton>
-    </>
+    </form>
   );
 
   return (
