@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -12,9 +13,9 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-import axios from 'axios';
 
 import { useRouter } from 'src/routes/hooks';
+
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
@@ -56,10 +57,11 @@ export default function LoginView() {
         setSuccess(response.data.message);
         setError('');
         setTimeout(() => {
-          window.location.href = 'https://dashboard.coursistant.com';
+          router.push('/');
         }, 1500);
       }
-    } catch (error) {
+    } catch (err) {
+      console.log("Something happened");
       setError('Invalid email or password');
       setSuccess('');
     } finally {
@@ -145,12 +147,12 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Minimal</Typography>
+          <Typography variant="h4">Sign in to Coursistant</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
             <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-              Get started
+              Sign up here
             </Link>
           </Typography>
 
