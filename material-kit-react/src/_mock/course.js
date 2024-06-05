@@ -46,6 +46,6 @@ export const course = [...Array(24)].map((_, index) => ({
   name: generateCourseCode(),
   company: faker.helpers.arrayElement(schoolNames),
   isVerified: faker.datatype.boolean(),
-  status: sample(['active', 'banned']),
+  status: sample(['Activated', 'Deactivated']),
   role: generateSemester(),
 }));
