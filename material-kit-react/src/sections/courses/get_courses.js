@@ -3,7 +3,7 @@ import axios from 'axios';
 // Function to get courses from the API
 export const getCourses = async (userId) => {
   try {
-    const response = await axios.get('http://api.e-ta.net/api/get_course', {
+    const response = await axios.get('https://api.e-ta.net/api/get_course', {
       params: {
         user_id: userId,
       },
