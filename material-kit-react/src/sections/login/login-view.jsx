@@ -44,14 +44,18 @@ export default function LoginView() {
     setPassword(e.target.value);
   };
 
+  const handleSignUpClick = (event) => {
+    event.preventDefault();
+    router.push('/signup');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
-
     try {
-      const response = await axios.post('http://api.e-ta.net/api/login', { email, password });
+      const response = await axios.post('https://api.e-ta.net/api/login', { email, password });
 
       if (response.status === 200) {
         setSuccess(response.data.message);
@@ -147,11 +151,14 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4">Sign in to Coursistant</Typography>
-
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }}>
+            <Link 
+              variant="subtitle2" 
+              sx={{ ml: 0.5 }} 
+              onClick={handleSignUpClick} 
+              href="#"
+            >
               Sign up here
             </Link>
           </Typography>

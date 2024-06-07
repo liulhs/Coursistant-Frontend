@@ -4,6 +4,7 @@
   "licence": "MIT",
   "version": "1.8.0",
   "private": false,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "start": "vite preview",

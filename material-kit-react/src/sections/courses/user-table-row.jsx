@@ -11,22 +11,26 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { useRouter } from 'src/routes/hooks';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
+import { getRandomColor } from './utils';
 
 export default function UserTableRow({
+  course_id,
   selected,
   name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
+  // avatarUrl,
+  school,
+  semester,
+  instructor,
   status,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
+  const router = useRouter();
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -36,6 +40,11 @@ export default function UserTableRow({
     setOpen(null);
   };
 
+  const handleRowClick = () => {
+    const routeName = name.split(' ').join('_');
+    router.push(`/course-info/${routeName}?course_id=${course_id}`);
+  };
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -43,23 +52,31 @@ export default function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
+        <TableCell
+          component="th"
+          scope="row"
+          padding="none"
+          onClick={handleRowClick}
+          style={{ cursor: 'pointer' }}
+        >
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+            <Avatar sx={{ bgcolor: getRandomColor() }}>
+              {name.split(' ')[0]}
+            </Avatar>
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
+        <TableCell>{school}</TableCell>
 
-        <TableCell>{role}</TableCell>
+        <TableCell>{semester}</TableCell>
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
+        <TableCell align="center">{instructor}</TableCell>
 
         <TableCell>
-          <Label color={(status === '' && 'error') || 'success'}>{status}</Label>
+          <Label color={(status === 'Not Activated' && 'error') || 'success'}>{status}</Label>
         </TableCell>
 
         <TableCell align="right">
@@ -94,12 +111,13 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
+  // avatarUrl: PropTypes.any,
+  course_id: PropTypes.any,
+  school: PropTypes.any,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
+  instructor: PropTypes.any,
   name: PropTypes.any,
-  role: PropTypes.any,
+  semester: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
 };

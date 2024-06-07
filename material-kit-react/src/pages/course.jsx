@@ -4,7 +4,7 @@ import { CourseView } from 'src/sections/courses/view';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function CoursePage() {
   return (
     <>
       <Helmet>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -10,12 +10,13 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { course } from 'src/_mock/course';
+// import { course } from 'src/_mock/course';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../table-no-data';
+import { getCourses } from '../get_courses';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
@@ -37,6 +38,18 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [course, setCourse] = useState([]);
+  
+  // Fetch courses when the component mounts
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const courses = await getCourses(42); // Replace 42 with the actual user_id if needed
+      setCourse(courses);
+    };
+
+    fetchCourses();
+  }, []);
+  
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -123,10 +136,10 @@ export default function UserPage() {
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Course Name' },
-                  { id: 'company', label: 'School' },
-                  { id: 'role', label: 'Semester' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'school', label: 'School' },
+                  { id: 'semester', label: 'Semester' },
+                  { id: 'instructor', label: 'Instructor', align: 'center' },
+                  { id: 'status', label: 'Piazza Status' },
                   { id: '' },
                 ]}
               />
@@ -135,13 +148,14 @@ export default function UserPage() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
+                      key={row.course_id}
+                      course_id={row.course_id}
                       name={row.name}
-                      role={row.role}
+                      semester={row.semester}
                       status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      school={row.school}
+                      // avatarUrl={row.avatarUrl}
+                      instructor={row.instructor}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />

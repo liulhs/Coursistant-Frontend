@@ -42,10 +42,10 @@ const generateSemester = () => {
 
 export const course = [...Array(24)].map((_, index) => ({
   id: faker.string.uuid(),
-  avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
+  // avatarUrl: `/assets/images/avatars/avatar_${index + 1}.jpg`,
   name: generateCourseCode(),
-  company: faker.helpers.arrayElement(schoolNames),
-  isVerified: faker.datatype.boolean(),
-  status: sample(['Activated', 'Deactivated']),
-  role: generateSemester(),
+  school: faker.helpers.arrayElement(schoolNames),
+  instructor: faker.datatype.boolean(),
+  status: sample(['Activated', 'Not Activated']),
+  semester: generateSemester(),
 }));

@@ -14,7 +14,7 @@ const navConfig = [
   },
   {
     title: 'My Course',
-    path: '/user',
+    path: '/my_courses',
     icon: icon('ic_course'),
   },
   {
@@ -32,11 +32,11 @@ const navConfig = [
   //   path: '/blog',
   //   icon: icon('ic_blog'),
   // },
-  // {
-  //   title: 'login',
-  //   path: '/login',
-  //   icon: icon('ic_lock'),
-  // },
+  {
+    title: 'login',
+    path: '/login',
+    icon: icon('ic_lock'),
+  },
   // {
   //   title: 'Not found',
   //   path: '/404',
