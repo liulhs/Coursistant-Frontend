@@ -7,8 +7,8 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import KnowledgeItems from './KnowledgeItems';
 
+import KnowledgeItems from './KnowledgeItems';
 import { getCourseDetail } from '../get_ccourse_detail';
 
 export default function CourseInfoView({ courseName, course_id }) {
