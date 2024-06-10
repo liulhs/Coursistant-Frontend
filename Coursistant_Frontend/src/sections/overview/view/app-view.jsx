@@ -1,4 +1,5 @@
 // import { faker } from '@faker-js/faker';
+import React, { useState, useEffect } from 'react';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -15,10 +16,24 @@ import AppWidgetSummary from '../app-widget-summary';
 // import AppTrafficBySite from '../app-traffic-by-site';
 // import AppCurrentSubject from '../app-current-subject';
 // import AppConversionRates from '../app-conversion-rates';
+import { getCoursesNum } from '../get_account_info';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+
+  const [totalCourses, setTotalCourses] = useState(0);
+
+  useEffect(() => {
+    const fetchTotalCourses = async () => {
+      const userId = 42;
+      const numCourses = await getCoursesNum(userId);
+      setTotalCourses(numCourses);
+    };
+
+    fetchTotalCourses();
+  }, []);
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h2" sx={{ mb: 5 }}>
@@ -33,7 +48,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
             title="Courses Registered"
-            total={1}
+            total={totalCourses}
             color="success"
             icon={<img alt="icon" src="/assets/icons/home/ic_open_book.png" />}
           />
