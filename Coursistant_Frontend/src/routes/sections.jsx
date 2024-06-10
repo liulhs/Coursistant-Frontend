@@ -12,6 +12,7 @@ export const SignupPage = lazy(() => import('src/pages/signup'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const CourseInfoPage = lazy(() => import('src/pages/course-info'));
+export const ChatView = lazy(() => import('src/pages/chat'));
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'course-info/:dynamicName', element: <CourseInfoPage /> },
+        { path: 'chat', element: <ChatView /> }
       ],
     },
     {

@@ -18,6 +18,11 @@ const navConfig = [
     icon: icon('ic_course'),
   },
   {
+    title: 'Coursistant Chat',
+    path: '/chat',
+    icon: icon('ic_chat'),
+  },
+  {
     title: 'Account',
     path: '/profile',
     icon: icon('ic_user'),
