@@ -7,9 +7,12 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
+import KnowledgeItems from './KnowledgeItems';
+
 export default function CourseInfoView({ courseName }) {
   return (
     <Container maxWidth="xl">
+      <KnowledgeItems courseID="20231-EE457LX" />
       <Box sx={{ mb: 5 }}>
         <Typography variant="h2" sx={{ mb: 3 }}>
           {courseName}
