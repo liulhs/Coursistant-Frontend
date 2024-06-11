@@ -16,7 +16,7 @@ const KnowledgeItems = ({ courseID }) => {
 
     const fetchData = useCallback(async (hasStartKey) => {
         try {
-            const response = await axios.post('http://lax.nonev.win:5000/readDB', {
+            const response = await axios.post('/readDB', {
                 hasStartKey,
                 startKey,
                 courseID,
@@ -60,7 +60,7 @@ const KnowledgeItems = ({ courseID }) => {
 
     const handleUpdate = async () => {
         try {
-            const response = await axios.post('http://lax.nonev.win:5000/itemUpdate', {
+            const response = await axios.post('/itemUpdate', {
                 courseID,
                 primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime },
                 updateContent
@@ -76,7 +76,7 @@ const KnowledgeItems = ({ courseID }) => {
 
     const handleDelete = async () => {
         try {
-            await axios.post('http://lax.nonev.win:5000/itemDelete', {
+            await axios.post('/itemDelete', {
                 courseID,
                 primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime }
             });

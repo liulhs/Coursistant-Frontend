@@ -28,6 +28,13 @@ export default defineConfig({
   },
   server: {
     port: 3030,
+    proxy: {
+      '/readDB': {
+        target: 'http://lax.nonev.win:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   preview: {
     port: 3030,
