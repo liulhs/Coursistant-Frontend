@@ -141,9 +141,11 @@
 
 // export default KnowledgeItems;
 
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, CardContent, Typography, Button, Grid, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, DialogContentText } from '@mui/material';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect, useCallback } from 'react';
+
+import { Card, Grid, Button, Dialog, TextField, Typography, CardContent, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 
 const KnowledgeItems = ({ courseID }) => {
@@ -155,9 +157,9 @@ const KnowledgeItems = ({ courseID }) => {
     const [currentItem, setCurrentItem] = useState(null);
     const [updateContent, setUpdateContent] = useState('');
 
-    const fetchData = async (hasStartKey) => {
+    const fetchData = useCallback(async (hasStartKey) => {
         try {
-            const response = await axios.post('http://lax.nonev.win:5000/readDB', {
+            const response = await axios.post('/readDB', {
                 hasStartKey,
                 startKey,
                 courseID,
@@ -170,11 +172,11 @@ const KnowledgeItems = ({ courseID }) => {
         } catch (error) {
             console.error('Failed to fetch data:', error);
         }
-    };
+    }, [courseID, startKey]); // add dependencies here
 
     useEffect(() => {
         fetchData(false);
-    }, [courseID]);
+    }, [fetchData]); // add fetchData as a dependency
 
     const handleNext = () => {
         setCurrentPage(currentPage + 1);
@@ -295,4 +297,9 @@ const KnowledgeItems = ({ courseID }) => {
     );
 };
 
+
 export default KnowledgeItems;
+
+KnowledgeItems.propTypes = {
+    courseID: PropTypes.string.isRequired
+  };

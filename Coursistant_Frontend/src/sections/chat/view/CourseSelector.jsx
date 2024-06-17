@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography, Button } from '@mui/material';
+
+import { Box, Button, Typography } from '@mui/material';
 
 export default function CourseSelector({ tables, selectedTable, setSelectedTable, prompt }) {
   return (

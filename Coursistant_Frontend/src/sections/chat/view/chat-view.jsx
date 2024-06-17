@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, Box } from '@mui/material';
-import ChatDialog from './components/ChatDialog'; 
-import CourseSelector from './CourseSelector';
+import React, { useState, useEffect } from 'react';
+
+import { Box, Grid } from '@mui/material';
+
+import CourseSelector from './CourseSelector'; 
+import ChatDialog from './components/ChatDialog';
 
 export default function ChatView() {
   const [tables, setTables] = useState([]);

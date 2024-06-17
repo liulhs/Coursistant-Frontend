@@ -7,8 +7,8 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import KnowledgeItems from './KnowledgeItems';
 
+import KnowledgeItems from './KnowledgeItems';
 import { getCourseDetail } from '../get_ccourse_detail';
 
 export default function CourseInfoView({ courseName, course_id }) {
@@ -38,7 +38,7 @@ export default function CourseInfoView({ courseName, course_id }) {
       </Box>
 
       <Grid container spacing={3}>
-
+        
         <Grid xs={12} md={8}>
           <KnowledgeItems courseID="20231-EE457LX"/>
         </Grid>
@@ -50,14 +50,7 @@ export default function CourseInfoView({ courseName, course_id }) {
                 Course Features
               </Typography>
               <Typography variant="body1">
-                This course offers:
-                <ul>
-                  <li>Comprehensive video lectures</li>
-                  <li>Interactive quizzes and assignments</li>
-                  <li>Access to a community forum</li>
-                  <li>Certificate of completion</li>
-                  <li>Piazza status: {courseDetails ? courseDetails.piazza_status : 'Loading...'}</li>
-                </ul>
+                This course offers: Place holder
               </Typography>
             </CardContent>
           </Card>

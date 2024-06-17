@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Box, TextField, Button, Typography, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import PropTypes from 'prop-types';
+import React, { useRef, useState, useEffect } from 'react';
+
 import Alert from '@mui/material/Alert';
+import { Box, Button, Select, MenuItem, TextField, Typography, InputLabel, FormControl, InputAdornment } from '@mui/material';
+
 import './ChatDialog.css';
 
 export default function ChatDialog({ tableName }) {
@@ -46,13 +49,13 @@ export default function ChatDialog({ tableName }) {
           videoUrl: linkMatch ? linkMatch[1] : null,
         };
 
-        setMessages(messages => [...messages, newMessage]);
+        setMessages(prevMessages => [...prevMessages, newMessage]);
       } else {
-        setMessages(messages => [...messages, { text: "No answer available, please try again.", author: "bot" }]);
+        setMessages(prevMessages => [...prevMessages, { text: "No answer available, please try again.", author: "bot" }]);
       }
     } catch (error) {
       console.error('Error fetching reply:', error);
-      setMessages(messages => [...messages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
+      setMessages(prevMessages => [...prevMessages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
     }
   };
 
@@ -68,13 +71,13 @@ export default function ChatDialog({ tableName }) {
           author: "bot",
           image: response.data.image ? `data:image/png;base64,${response.data.image}` : null
         };
-        setMessages(messages => [...messages, newMessage]);
+        setMessages(prevMessages => [...prevMessages, newMessage]);
       } else {
-        setMessages(messages => [...messages, { text: "No answer available, please try again.", author: "bot" }]);
+        setMessages(prevMessages => [...prevMessages, { text: "No answer available, please try again.", author: "bot" }]);
       }
     } catch (error) {
       console.error('Error fetching reply:', error);
-      setMessages(messages => [...messages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
+      setMessages(prevMessages => [...prevMessages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
     }
   };
 
@@ -84,7 +87,7 @@ export default function ChatDialog({ tableName }) {
       return;
     } 
     const newMessage = { text: inputMessage, author: "user" };
-    setMessages(messages => [...messages, newMessage]);
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     setInputMessage("");
     if (apiChoice === "A") {
       await fetchReplyA(inputMessage);
@@ -94,7 +97,7 @@ export default function ChatDialog({ tableName }) {
   };
 
   const openAlert = (message, severity) => {
-    setAlertInfo({ open: true, text: message, severity: severity });
+    setAlertInfo({ open: true, text: message, severity });
     setTimeout(() => {
       setAlertInfo({ open: false, text: '' });
     }, 5000);
@@ -110,7 +113,7 @@ export default function ChatDialog({ tableName }) {
     }
   }, [messages]);
 
-  const courseStatusMessage = tableName ? "Currently Asking for: " + tableName : "Please select a course first.";
+  const courseStatusMessage = tableName ? `Currently Asking for: ${  tableName}` : "Please select a course first.";
 
   return (
     <Box sx={{ maxWidth: 1500, margin: 'auto', p: 0 }}>
@@ -165,7 +168,7 @@ export default function ChatDialog({ tableName }) {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   style={{ marginTop: 8 }}
-                ></iframe>
+                 />
               )}
               {message.image && <img src={message.image} alt="Related visual content" style={{ maxWidth: '100%', marginTop: 8 }} />}
             </Box>
@@ -217,3 +220,7 @@ export default function ChatDialog({ tableName }) {
     </Box>
   );
 }
+
+ChatDialog.propTypes = {
+  tableName: PropTypes.string.isRequired
+};
