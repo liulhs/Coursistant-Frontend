@@ -11,18 +11,44 @@ export default function ChatDialog({ tableName }) {
   const [apiChoice, setApiChoice] = useState("A");
   const messagesEndRef = useRef(null);
 
+  // const fetchReplyA = async (userMessage) => {
+  //   try {
+  //     const response = await axios.post('http://lax.nonev.win:5000/ask', {
+  //       question: userMessage,
+  //       courseID: tableName
+  //     });
+
+  //     if (response.data && response.data.hasAnswer) {
+  //       const newMessage = { text: response.data.answer, author: "bot", image: response.data.link[0] };
+  //       setMessages(messages => [...messages, newMessage]);
+  //     } else {
+  //       setMessages(messages => [...messages, { text: "Please wait for the instructor to answer.", author: "bot" }]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching reply:', error);
+  //     setMessages(messages => [...messages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
+  //   }
+  // };
+
   const fetchReplyA = async (userMessage) => {
     try {
-      const response = await axios.post('http://lax.nonev.win:5000/ask', {
-        question: userMessage,
-        courseID: tableName
+      const response = await axios.post('http://lax.nonev.win:5079/askChatEngine', {
+        question: userMessage
       });
 
-      if (response.data && response.data.hasAnswer) {
-        const newMessage = { text: response.data.answer, author: "bot", image: response.data.link[0] };
+      if (response.data && response.data.response) {
+        const text = response.data.response;
+        const linkMatch = text.match(/Link with timestamp: (https:\/\/www\.youtube\.com\/watch\?v=[^&]+&t=\d+)/);
+
+        const newMessage = {
+          text: linkMatch ? text.split('Link with timestamp:')[0] : text,
+          author: "bot",
+          videoUrl: linkMatch ? linkMatch[1] : null,
+        };
+
         setMessages(messages => [...messages, newMessage]);
       } else {
-        setMessages(messages => [...messages, { text: "Please wait for the instructor to answer.", author: "bot" }]);
+        setMessages(messages => [...messages, { text: "No answer available, please try again.", author: "bot" }]);
       }
     } catch (error) {
       console.error('Error fetching reply:', error);
@@ -115,11 +141,32 @@ export default function ChatDialog({ tableName }) {
         {alertInfo.open && (
           <Alert severity="error"> {alertInfo.text} </Alert>
         )}
+        {/* {messages.map((message, index) => (
+          <Box key={index} sx={{ textAlign: message.author === 'user' ? 'right' : 'left', mb: 1 }}>
+            <Typography className="message-author">{message.author.toUpperCase()}</Typography>
+            <Box className={`message-bubble ${message.author === 'user' ? 'user-message' : 'bot-message'}`}>
+              <Typography>{message.text}</Typography>
+              {message.image && <img src={message.image} alt="Related visual content" style={{ maxWidth: '100%', marginTop: 8 }} />}
+            </Box>
+          </Box>
+        ))} */}
         {messages.map((message, index) => (
           <Box key={index} sx={{ textAlign: message.author === 'user' ? 'right' : 'left', mb: 1 }}>
             <Typography className="message-author">{message.author.toUpperCase()}</Typography>
             <Box className={`message-bubble ${message.author === 'user' ? 'user-message' : 'bot-message'}`}>
               <Typography>{message.text}</Typography>
+              {message.videoUrl && (
+                <iframe
+                  width="560"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${new URL(message.videoUrl).searchParams.get('v')}?start=${new URL(message.videoUrl).searchParams.get('t')}&autoplay=1`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ marginTop: 8 }}
+                ></iframe>
+              )}
               {message.image && <img src={message.image} alt="Related visual content" style={{ maxWidth: '100%', marginTop: 8 }} />}
             </Box>
           </Box>
