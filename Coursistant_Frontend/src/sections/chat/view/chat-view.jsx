@@ -37,7 +37,7 @@ export default function ChatView() {
             prompt="Select the class you want to ask:" 
           />
         </Grid>
-        <Grid item xs={12} sm={8} md={8} sx={{ p: 2 }}>
+        <Grid item xs={12} sm={8} md={9} sx={{ p: 2 }}>
           <ChatDialog tableName={selectedTable} />
         </Grid>
       </Grid>
