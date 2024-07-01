@@ -2,7 +2,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Card, CardContent, Typography, Button, Grid, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, DialogContentText } from '@mui/material';
+import { Card, Grid, Button, Dialog, TextField, Typography, CardContent, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 
 const KnowledgeItems = ({ courseID }) => {
@@ -13,6 +13,7 @@ const KnowledgeItems = ({ courseID }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [updateContent, setUpdateContent] = useState('');
+    
 
     const fetchData = useCallback(async (hasStartKey) => {
         try {
@@ -58,9 +59,25 @@ const KnowledgeItems = ({ courseID }) => {
         setDeleteDialogOpen(true);
     };
 
+    // const handleUpdate = async () => {
+    // try {
+    //     await axios.post('/itemUpdate', {
+    //         courseID,
+    //         primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime },
+    //         updateContent
+    //     });
+    //     alert('Item updated successfully');
+    //     fetchData(false);  
+    // } catch (error) {
+    //     console.error('Failed to update item:', error);
+    //     alert('Failed to update item');
+    // }
+    // setEditDialogOpen(false);
+    // }; 
+
     const handleUpdate = async () => {
         try {
-            const response = await axios.post('/itemUpdate', {
+            const response = await axios.post('http://lax.nonev.win:5000/itemUpdate', {
                 courseID,
                 primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime },
                 updateContent
@@ -76,7 +93,7 @@ const KnowledgeItems = ({ courseID }) => {
 
     const handleDelete = async () => {
         try {
-            await axios.post('/itemDelete', {
+            await axios.post('http://lax.nonev.win:5000/itemDelete', {
                 courseID,
                 primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime }
             });

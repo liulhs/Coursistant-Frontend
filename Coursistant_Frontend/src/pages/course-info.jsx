@@ -21,7 +21,7 @@ export default function CourseInfoPage() {
         <title>{courseName} | Coursistant</title>
       </Helmet>
 
-      <CourseInfoView courseName={courseName} courseId={course_id} />
+      <CourseInfoView courseName={courseName} course_id={course_id} />
     </>
   );
 }
