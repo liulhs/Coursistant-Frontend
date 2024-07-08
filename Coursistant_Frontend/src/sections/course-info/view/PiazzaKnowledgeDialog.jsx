@@ -15,7 +15,7 @@ const PiazzaKnowledgeDialog = ({ open, onClose, onSuccess }) => {
     const handleLogin = async () => {
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:5500/users/login', {
+            const response = await axios.post('http://lax.nonev.win:5500/users/login', {
                 email,
                 password
             });
@@ -33,7 +33,7 @@ const PiazzaKnowledgeDialog = ({ open, onClose, onSuccess }) => {
 
     const fetchCourses = async () => {
         try {
-            const response = await axios.get(`http://localhost:5500/users/${email}/courses/all`);
+            const response = await axios.get(`http://lax.nonev.win:5500/users/${email}/courses/all`);
             setCourses(response.data);
             setLoading(false);
         } catch (error) {

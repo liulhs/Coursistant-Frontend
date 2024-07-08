@@ -17,6 +17,7 @@ import LearnSelector from './learn-select-bar';
 import { getCourseDetail } from '../get_ccourse_detail';
 import VideoKnowledgeDialog from './VideoKnowledgeDialog';
 import PiazzaKnowledgeDialog from './PiazzaKnowledgeDialog'; // Import the PiazzaKnowledgeDialog component
+import PiazzaStatus from './PiazzaStatus';
 
 const icon = (name) => (
   <SvgColor src={`/assets/icons/learn-select/${name}.svg`} sx={{ width: 24, height: 24, ml: 1 }} />
@@ -118,6 +119,7 @@ export default function CourseInfoView({ courseName, course_id }) {
           <KnowledgeItems courseID="20233-EE542" selectedOption={selectedOption} />
         </Grid>
         <Grid xs={12} md={1.8}> {/* Adjusting the grid size */}
+          <PiazzaStatus courseID={course_id} />
           <LearnSelector
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
