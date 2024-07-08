@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Card, CardContent, Typography, Grid, Button, Alert} from '@mui/material';
 
 // Constants for API endpoints and credentials
-const CID = 'ln6oz2myx935bm';
+const CID = 'llqyd5tpdcq34o';
 const GET_COURSE_DETAILS_URL = `http://api.e-ta.net/api/get_course_detail`;
 const START_BOT_URL = `http://lax.nonev.win:5505/start/${CID}`;
 const STOP_BOT_URL = `http://lax.nonev.win:5505/stop/${CID}`;
