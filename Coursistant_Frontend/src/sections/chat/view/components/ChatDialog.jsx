@@ -14,25 +14,6 @@ export default function ChatDialog({ tableName }) {
   const [apiChoice, setApiChoice] = useState("A");
   const messagesEndRef = useRef(null);
 
-  // const fetchReplyA = async (userMessage) => {
-  //   try {
-  //     const response = await axios.post('http://lax.nonev.win:5000/ask', {
-  //       question: userMessage,
-  //       courseID: tableName
-  //     });
-
-  //     if (response.data && response.data.hasAnswer) {
-  //       const newMessage = { text: response.data.answer, author: "bot", image: response.data.link[0] };
-  //       setMessages(messages => [...messages, newMessage]);
-  //     } else {
-  //       setMessages(messages => [...messages, { text: "Please wait for the instructor to answer.", author: "bot" }]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching reply:', error);
-  //     setMessages(messages => [...messages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
-  //   }
-  // };
-
   const fetchReplyA = async (userMessage) => {
     try {
       const response = await axios.post('http://lax.nonev.win:5079/askChatEngine', {
@@ -81,6 +62,27 @@ export default function ChatDialog({ tableName }) {
     }
   };
 
+  const fetchReplyC = async (userMessage) => {
+    try {
+      const response = await axios.post('http://localhost:5501/query', {
+        question: userMessage
+      });
+
+      if (response.data && response.data.response) {
+        const newMessage = {
+          text: response.data.response,
+          author: "bot"
+        };
+        setMessages(prevMessages => [...prevMessages, newMessage]);
+      } else {
+        setMessages(prevMessages => [...prevMessages, { text: "No answer available, please try again.", author: "bot" }]);
+      }
+    } catch (error) {
+      console.error('Error fetching reply:', error);
+      setMessages(prevMessages => [...prevMessages, { text: "Failed to fetch reply, please try again.", author: "bot" }]);
+    }
+  };
+
   const handleSend = async () => {
     if (!inputMessage.trim()) {
       openAlert('Please enter your question here.', 'error');
@@ -91,8 +93,10 @@ export default function ChatDialog({ tableName }) {
     setInputMessage("");
     if (apiChoice === "A") {
       await fetchReplyA(inputMessage);
-    } else {
+    } else if (apiChoice === "B") {
       await fetchReplyB(inputMessage);
+    } else {
+      await fetchReplyC(inputMessage);
     }
   };
 
@@ -137,6 +141,7 @@ export default function ChatDialog({ tableName }) {
           >
             <MenuItem value="A">Video TA</MenuItem>
             <MenuItem value="B">Slide TA</MenuItem>
+            <MenuItem value="C">Piazza TA</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -144,15 +149,6 @@ export default function ChatDialog({ tableName }) {
         {alertInfo.open && (
           <Alert severity="error"> {alertInfo.text} </Alert>
         )}
-        {/* {messages.map((message, index) => (
-          <Box key={index} sx={{ textAlign: message.author === 'user' ? 'right' : 'left', mb: 1 }}>
-            <Typography className="message-author">{message.author.toUpperCase()}</Typography>
-            <Box className={`message-bubble ${message.author === 'user' ? 'user-message' : 'bot-message'}`}>
-              <Typography>{message.text}</Typography>
-              {message.image && <img src={message.image} alt="Related visual content" style={{ maxWidth: '100%', marginTop: 8 }} />}
-            </Box>
-          </Box>
-        ))} */}
         {messages.map((message, index) => (
           <Box key={index} sx={{ textAlign: message.author === 'user' ? 'right' : 'left', mb: 1 }}>
             <Typography className="message-author">{message.author.toUpperCase()}</Typography>

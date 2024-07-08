@@ -10,8 +10,6 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-// import { course } from 'src/_mock/course';
-
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
@@ -19,27 +17,21 @@ import TableNoData from '../table-no-data';
 import { getCourses } from '../get_courses';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
+import AddCourseDialog from './AddCourseDialog';
 import TableEmptyRows from '../table-empty-rows';
 import CourseTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-
-// ----------------------------------------------------------------------
+import { emptyRows, applyFilter, getComparator } from '../utils'; // Import AddCourseDialog component
 
 export default function UserPage() {
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [course, setCourse] = useState([]);
-  
+  const [dialogOpen, setDialogOpen] = useState(false); // State to control dialog visibility
+
   // Fetch courses when the component mounts
   useEffect(() => {
     const fetchCourses = async () => {
@@ -49,7 +41,7 @@ export default function UserPage() {
 
     fetchCourses();
   }, []);
-  
+
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -99,6 +91,25 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const handleAddCourseClick = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogSuccess = () => {
+    setDialogOpen(false);
+    // Fetch courses again after successful addition
+    const fetchCourses = async () => {
+      const courses = await getCourses(42); // Replace 42 with the actual user_id if needed
+      setCourse(courses);
+    };
+
+    fetchCourses();
+  };
+
   const dataFiltered = applyFilter({
     inputData: course,
     comparator: getComparator(order, orderBy),
@@ -112,7 +123,12 @@ export default function UserPage() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">My Courses</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleAddCourseClick}
+        >
           Add Course
         </Button>
       </Stack>
@@ -182,6 +198,7 @@ export default function UserPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
+      <AddCourseDialog open={dialogOpen} onClose={handleDialogClose} onSuccess={handleDialogSuccess} />
     </Container>
   );
 }

@@ -14,8 +14,6 @@ export default function CourseInfoPage() {
 
   // Convert the dynamic name back to a readable format if needed
   const courseName = dynamicName.split('_').join(' ');
-  console.log(course_id);
-  console.log(courseName);
 
   return (
     <>

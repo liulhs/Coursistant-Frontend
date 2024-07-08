@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import { Card, Grid, Button, Dialog, TextField, Typography, CardContent, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
-
 const KnowledgeItems = ({ courseID }) => {
     const [items, setItems] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
@@ -13,6 +12,7 @@ const KnowledgeItems = ({ courseID }) => {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [updateContent, setUpdateContent] = useState('');
+    const [error, setError] = useState(false); // State to handle error
 
     const fetchData = useCallback(async (hasStartKey) => {
         try {
@@ -25,9 +25,11 @@ const KnowledgeItems = ({ courseID }) => {
             if (response.data.result.status === 200) {
                 setItems(response.data.result.items);
                 setStartKey(response.data.result.startKey);
+                setError(false); // Reset error state on successful fetch
             }
         } catch (error) {
             console.error('Failed to fetch data:', error);
+            setError(true); // Set error state on fetch failure
         }
     }, [courseID, startKey]); // add dependencies here
 
@@ -91,22 +93,30 @@ const KnowledgeItems = ({ courseID }) => {
 
     return (
         <Grid container spacing={2}>
-            {items.map((item, index) => (
-                <Grid item xs={12} key={index}>
-                    <Card variant="outlined">
-                        <CardContent>
-                            <Typography variant="h6" color="text.secondary">
-                                Uploaded: {new Date(item.CreatedTime).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                            </Typography>
-                            <Typography variant="body1">
-                                {item.OriginalText}
-                            </Typography>
-                            <Button onClick={() => openEditDialog(item)} >Edit</Button>
-                            <Button onClick={() => openDeleteDialog(item)} >Delete</Button>
-                        </CardContent>
-                    </Card>
+            {error || items.length === 0 ? (
+                <Grid item xs={12}>
+                    <Typography variant="h6" color="text.secondary">
+                        There is no relative knowledge yet on Coursistant for this course. Try adding them.
+                    </Typography>
                 </Grid>
-            ))}
+            ) : (
+                items.map((item, index) => (
+                    <Grid item xs={12} key={index}>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="h6" color="text.secondary">
+                                    Uploaded: {new Date(item.CreatedTime).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                </Typography>
+                                <Typography variant="body1">
+                                    {item.OriginalText}
+                                </Typography>
+                                <Button onClick={() => openEditDialog(item)}>Edit</Button>
+                                <Button onClick={() => openDeleteDialog(item)}>Delete</Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))
+            )}
             {/* Pagination Controls */}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                 <Button onClick={handlePrevious} disabled={currentPage === 0}>Previous</Button>
@@ -154,9 +164,8 @@ const KnowledgeItems = ({ courseID }) => {
     );
 };
 
-
-export default KnowledgeItems;
-
 KnowledgeItems.propTypes = {
     courseID: PropTypes.string.isRequired
-  };
+};
+
+export default KnowledgeItems;
