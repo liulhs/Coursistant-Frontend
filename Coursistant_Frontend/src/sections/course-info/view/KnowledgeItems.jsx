@@ -2,56 +2,59 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Card, Grid, Button, Dialog, TextField, Typography, CardContent, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { Box, Card, Grid, Button, Dialog, TextField, Typography, CardContent, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 const KnowledgeItems = ({ courseID }) => {
     const [items, setItems] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
-    const [startKey, setStartKey] = useState(null);
+    const [totalPages, setTotalPages] = useState(0);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
     const [updateContent, setUpdateContent] = useState('');
-    const [error, setError] = useState(false); // State to handle error
+    const [error, setError] = useState(false);
 
-    const fetchData = useCallback(async (hasStartKey) => {
+    const fetchData = useCallback(async () => {
         try {
-            const response = await axios.post('/readDB', {
-                hasStartKey,
-                startKey,
-                courseID,
-                readLimit: "10"
+            const response = await axios.get('https://api.e-ta.net/api/get_json', {
+                params: {
+                    class_id: 5
+                }
             });
-            if (response.data.result.status === 200) {
-                setItems(response.data.result.items);
-                setStartKey(response.data.result.startKey);
-                setError(false); // Reset error state on successful fetch
+            if (response.status === 200) {
+                setItems(response.data);
+                setTotalPages(Math.ceil(response.data.length / 10)); // Assume 10 items per page
+                setError(false);
             }
-        } catch (error) {
-            console.error('Failed to fetch data:', error);
-            setError(true); // Set error state on fetch failure
+        } catch (err) {
+            console.error('Failed to fetch data:', err);
+            setError(true);
         }
-    }, [courseID, startKey]); // add dependencies here
+    }, []);
 
     useEffect(() => {
-        fetchData(false);
-    }, [fetchData]); // add fetchData as a dependency
+        fetchData();
+    }, [fetchData]);
 
     const handleNext = () => {
-        setCurrentPage(currentPage + 1);
-        fetchData(true);
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     const handlePrevious = () => {
         if (currentPage > 0) {
             setCurrentPage(currentPage - 1);
-            fetchData(false);
         }
+    };
+
+    const handlePageClick = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     const openEditDialog = (item) => {
         setCurrentItem(item);
-        setUpdateContent(item.OriginalText);
+        setUpdateContent(item.detail.content);
         setEditDialogOpen(true);
     };
 
@@ -64,13 +67,13 @@ const KnowledgeItems = ({ courseID }) => {
         try {
             const response = await axios.post('http://lax.nonev.win:5000/itemUpdate', {
                 courseID,
-                primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime },
+                primary_key: { ID: currentItem.id, CreatedTime: currentItem.time },
                 updateContent
             });
             alert('Item updated successfully');
-            fetchData(false);  
-        } catch (error) {
-            console.error('Failed to update item:', error);
+            fetchData();  
+        } catch (err) {
+            console.error('Failed to update item:', err);
             alert('Failed to update item');
         }
         setEditDialogOpen(false);
@@ -80,12 +83,12 @@ const KnowledgeItems = ({ courseID }) => {
         try {
             await axios.post('http://lax.nonev.win:5000/itemDelete', {
                 courseID,
-                primary_key: { ID: currentItem.ID, CreatedTime: currentItem.CreatedTime }
+                primary_key: { ID: currentItem.id, CreatedTime: currentItem.time }
             });
             alert('Item deleted successfully');
-            fetchData(false);  
-        } catch (error) {
-            console.error('Failed to delete item:', error);
+            fetchData();  
+        } catch (err) {
+            console.error('Failed to delete item:', err);
             alert('Failed to delete item');
         }
         setDeleteDialogOpen(false);
@@ -100,15 +103,30 @@ const KnowledgeItems = ({ courseID }) => {
                     </Typography>
                 </Grid>
             ) : (
-                items.map((item, index) => (
+                items.slice(currentPage * 10, (currentPage + 1) * 10).map((item, index) => (
                     <Grid item xs={12} key={index}>
                         <Card variant="outlined">
                             <CardContent>
                                 <Typography variant="h6" color="text.secondary">
-                                    Uploaded: {new Date(item.CreatedTime).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                    {item.type === 'question' ? 'Question' : 'Announcement'}
+                                </Typography>
+                                <Typography variant="h6">
+                                    {item.detail.subject}
                                 </Typography>
                                 <Typography variant="body1">
-                                    {item.OriginalText}
+                                    {item.detail.content}
+                                </Typography>
+                                {item.type === 'question' && item.answers.map((answer, idx) => (
+                                    <Typography 
+                                        key={idx} 
+                                        variant="body2" 
+                                        style={{ color: answer.type === 'i_answer' ? 'blue' : 'green' }}
+                                    >
+                                        {answer.type === 'i_answer' ? `Instructor's answer: ${answer.content}` : `Student's answer: ${answer.content}`}
+                                    </Typography>
+                                ))}
+                                <Typography variant="caption" color="text.secondary">
+                                    {new Date(item.time).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </Typography>
                                 <Button onClick={() => openEditDialog(item)}>Edit</Button>
                                 <Button onClick={() => openDeleteDialog(item)}>Delete</Button>
@@ -117,12 +135,22 @@ const KnowledgeItems = ({ courseID }) => {
                     </Grid>
                 ))
             )}
-            {/* Pagination Controls */}
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                 <Button onClick={handlePrevious} disabled={currentPage === 0}>Previous</Button>
-                <Button onClick={handleNext}>Next</Button>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <Button
+                            key={i}
+                            onClick={() => handlePageClick(i)}
+                            variant={i === currentPage ? 'contained' : 'outlined'}
+                            sx={{ mx: 0.5 }}
+                        >
+                            {i + 1}
+                        </Button>
+                    ))}
+                </Box>
+                <Button onClick={handleNext} disabled={currentPage === totalPages - 1}>Next</Button>
             </Grid>
-            {/* Edit Dialog */}
             <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
                 <DialogTitle>Edit Knowledge Item</DialogTitle>
                 <DialogContent>
@@ -147,7 +175,6 @@ const KnowledgeItems = ({ courseID }) => {
                     <Button onClick={handleUpdate}>Update</Button>
                 </DialogActions>
             </Dialog>
-            {/* Delete Dialog */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
                 <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
