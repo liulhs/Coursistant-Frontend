@@ -56,7 +56,7 @@ export default function CourseInfoView({ courseName, course_id }) {
     setAlertOpen(true);
     setTimeout(() => {
       setAlertOpen(false);
-    }, 5000); // Close the alert after 3 seconds
+    }, 5000); // Close the alert after 5 seconds
   };
 
   const getButtonText = () => {
@@ -80,7 +80,6 @@ export default function CourseInfoView({ courseName, course_id }) {
     }
     return null;
   };
-
 
   return (
     <Container maxWidth="xl">
@@ -126,13 +125,17 @@ export default function CourseInfoView({ courseName, course_id }) {
           />
         </Grid>
       </Grid>
-      {/* {alertOpen && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          Course Posts Successfully Learned!
-        </Alert>
-      )} */}
-      <PiazzaKnowledgeDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSuccess={handleDialogSuccess} />
-      <VideoKnowledgeDialog open={videoDialogOpen} onClose={() => setVideoDialogOpen(false)} onSuccess={handleDialogSuccess} />
+      <PiazzaKnowledgeDialog 
+        open={dialogOpen} 
+        onClose={() => setDialogOpen(false)} 
+        onSuccess={handleDialogSuccess} 
+        course_id={course_id} // Pass course_id as prop
+      />
+      <VideoKnowledgeDialog 
+        open={videoDialogOpen} 
+        onClose={() => setVideoDialogOpen(false)} 
+        onSuccess={handleDialogSuccess} 
+      />
     </Container>
   );
 }
